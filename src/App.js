@@ -1,24 +1,161 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from "react";
+import {
+  Button,
+  InputGroup,
+  Intent,
+  Menu,
+  MenuItem,
+  Tag,
+  TextArea,
+  Popover,
+  Position
+} from "@blueprintjs/core";
+import "./App.css";
 
 function App() {
+  const [isEdit, setIsEdit] = useState(true);
+  const [text, setText] = useState("");
+  const [selectionText, setSelectionText] = useState("");
+  const [selectionIndex, setSelectionIndex] = useState([0, 0]);
+  const [tags, setTags] = useState([]);
+
+  const handleSelection = () => {
+    const textarea = document.getElementById("textarea");
+    const selection = window.getSelection();
+    setSelectionText(selection.toString());
+    setSelectionIndex([textarea.selectionStart, textarea.selectionEnd]);
+  };
+
+  const handleTag = color => {
+    setTags(
+      [
+        ...tags,
+        {
+          label: selectionText,
+          color: color,
+          index: selectionIndex
+        }
+      ].sort(compare)
+    );
+    setSelectionText("");
+    setSelectionIndex([0, 0]);
+  };
+
+  const compare = (a, b) => {
+    const A = a.index[0];
+    const B = b.index[0];
+
+    let comparison = 0;
+    if (A > B) {
+      comparison = 1;
+    } else if (A < B) {
+      comparison = -1;
+    }
+    return comparison;
+  };
+
+  const TagMenu = (
+    <Popover
+      content={
+        <Menu>
+          <MenuItem text="Tag Red" onClick={() => handleTag("red")} />
+          <MenuItem text="Tag Blue" onClick={() => handleTag("blue")} />
+        </Menu>
+      }
+      position={Position.BOTTOM_RIGHT}
+    >
+      <Button minimal={true} rightIcon="caret-down">
+        Tag
+      </Button>
+    </Popover>
+  );
+
+  const createHTMLText = () => {
+    let output = "";
+    let index = 0;
+    tags.forEach(tag => {
+      output =
+        output +
+        text.substring(index, tag.index[0]) +
+        `<span class="${tag.color}">` +
+        text.substring(tag.index[0], tag.index[1]) +
+        `</span>`;
+      index = tag.index[1];
+    });
+    output = output + text.substring(index);
+    return output;
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="App-header">
+      <div className="Container">
+        {isEdit ? (
+          <>
+            <InputGroup
+              disabled={selectionText === ""}
+              large
+              placeholder="Select text to tag..."
+              rightElement={TagMenu}
+              value={selectionText}
+              style={{ flex: 1 }}
+            />
+            <TextArea
+              id="textarea"
+              placeholder="Remarks..."
+              growVertically={true}
+              large={true}
+              intent={Intent.PRIMARY}
+              onChange={event => setText(event.target.value)}
+              value={text}
+              style={{ width: "100%", marginTop: "1rem" }}
+              onMouseUp={handleSelection}
+              onKeyUp={handleSelection}
+            />
+            <div className="Tags-container">
+              <div>
+                {tags.map((tag, index) => (
+                  <Tag
+                    key={index}
+                    intent={
+                      tag.color === "red" ? Intent.DANGER : Intent.PRIMARY
+                    }
+                    onRemove={() =>
+                      setTags(
+                        tags.filter((value, tagindex) => tagindex !== index)
+                      )
+                    }
+                    className="Tag"
+                  >
+                    {tag.label}
+                  </Tag>
+                ))}
+              </div>
+              <div>
+                <Tag>{`${selectionIndex[0]} / ${selectionIndex[1]}`}</Tag>
+              </div>
+            </div>
+            <Button
+              onClick={() => setIsEdit(false)}
+              style={{ marginTop: "2rem" }}
+            >
+              Done
+            </Button>
+          </>
+        ) : (
+          <>
+            <div
+              dangerouslySetInnerHTML={{ __html: createHTMLText() }}
+              className="Text-container"
+            />
+            <Button
+              onClick={() => setIsEdit(true)}
+              style={{ marginTop: "2rem" }}
+            >
+              Edit
+            </Button>
+          </>
+        )}
+      </div>
     </div>
   );
 }

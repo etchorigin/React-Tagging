@@ -58,8 +58,8 @@ function App() {
     <Popover
       content={
         <Menu>
-          <MenuItem text="Tag Red" onClick={() => handleTag("red")} />
-          <MenuItem text="Tag Blue" onClick={() => handleTag("blue")} />
+          <MenuItem text="Tag Red" onClick={() => handleTag("danger")} />
+          <MenuItem text="Tag Blue" onClick={() => handleTag("primary")} />
         </Menu>
       }
       position={Position.BOTTOM_RIGHT}
@@ -71,15 +71,18 @@ function App() {
   );
 
   const createHTMLText = () => {
+    if(text === "") {
+      return "Nothing here... Please enter Remarks."
+    }
     let output = "";
     let index = 0;
     tags.forEach(tag => {
       output =
         output +
         text.substring(index, tag.index[0]) +
-        `<span class="${tag.color}">` +
+        `<span class="bp3-tag bp3-intent-${tag.color}"><span class="bp3-text-overflow-ellipsis bp3-fill">` +
         text.substring(tag.index[0], tag.index[1]) +
-        `</span>`;
+        `</span></span>`;
       index = tag.index[1];
     });
     output = output + text.substring(index);
@@ -117,7 +120,7 @@ function App() {
                   <Tag
                     key={index}
                     intent={
-                      tag.color === "red" ? Intent.DANGER : Intent.PRIMARY
+                      tag.color === "danger" ? Intent.DANGER : Intent.PRIMARY
                     }
                     onRemove={() =>
                       setTags(

@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import {
   Button,
+  Card,
+  H4,
+  H6,
   InputGroup,
   Intent,
   Menu,
@@ -71,8 +74,8 @@ function App() {
   );
 
   const createHTMLText = () => {
-    if(text === "") {
-      return "Nothing here... Please enter Remarks."
+    if (text === "") {
+      return "Nothing here... Please enter Remarks.";
     }
     let output = "";
     let index = 0;
@@ -89,15 +92,21 @@ function App() {
     return output;
   };
 
+  document.body.className = "bp3-dark";
   return (
     <div className="App-header">
       <div className="Container">
+        <H4>React-Tagging</H4>
+        <H6 style={{ color: "#a7b6c299" }}>
+          Try entering a paragraph of Text, and proceed to highlight a selection
+          for tagging.
+        </H6>
         {isEdit ? (
           <>
             <InputGroup
               disabled={selectionText === ""}
               large
-              placeholder="Select text to tag..."
+              placeholder="Highlight Text to Tag..."
               rightElement={TagMenu}
               value={selectionText}
               style={{ flex: 1 }}
@@ -134,7 +143,7 @@ function App() {
                 ))}
               </div>
               <div>
-                <Tag>{`${selectionIndex[0]} / ${selectionIndex[1]}`}</Tag>
+                <Tag>{`Position ${selectionIndex[0]} / ${selectionIndex[1]}`}</Tag>
               </div>
             </div>
             <Button
@@ -158,6 +167,13 @@ function App() {
             </Button>
           </>
         )}
+      </div>
+      <div className="Footer-Container">
+        <p className="bp3-text-small bp3-text-muted">
+          <a href="https://github.com/etchorigin/React-Tagging">
+            https://github.com/etchorigin/React-Tagging
+          </a>
+        </p>
       </div>
     </div>
   );

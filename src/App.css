@@ -20,8 +20,7 @@
 .Text-container {
   font-size: 16px;
   white-space: pre-wrap;
-  background-color: white;
-  color: black;
+  background-color: #10161a4d;
   padding: 1rem;
 }
 
@@ -44,4 +43,9 @@
 .blue {
   text-transform: uppercase;
   color: blue;
+}
+
+.Footer-Container {
+  position: absolute;
+  bottom: 0;
 }

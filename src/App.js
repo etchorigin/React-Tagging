@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import {
   Button,
-  Card,
   H4,
   H6,
   InputGroup,
@@ -24,8 +23,9 @@ function App() {
 
   const handleSelection = () => {
     const textarea = document.getElementById("textarea");
-    const selection = window.getSelection();
-    setSelectionText(selection.toString());
+    setSelectionText(
+      text.substring(textarea.selectionStart, textarea.selectionEnd)
+    );
     setSelectionIndex([textarea.selectionStart, textarea.selectionEnd]);
   };
 
@@ -66,8 +66,13 @@ function App() {
         </Menu>
       }
       position={Position.BOTTOM_RIGHT}
+      disabled={selectionText === ""}
     >
-      <Button minimal={true} rightIcon="caret-down">
+      <Button
+        minimal={true}
+        rightIcon="caret-down"
+        disabled={selectionText === ""}
+      >
         Tag
       </Button>
     </Popover>

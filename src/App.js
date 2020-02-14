@@ -29,7 +29,41 @@ function App() {
     setSelectionIndex([textarea.selectionStart, textarea.selectionEnd]);
   };
 
+  const checkTags = (tags, selectionIndex) => {
+	  var curStart = selectionIndex[0]
+	  var curEnd = selectionIndex[1]
+
+    // Deep copy of tag array to prevent mutation
+    var tagsCopy = tags.slice()
+
+    // Setting an offset to keep the index consistent when removing items
+    var spliceOffset = 0	
+
+    // For each tag, if we detect that the new tag overlaps, we remove the old tag
+    tagsCopy.forEach((tag,index) => {
+          var tagStart = tag['index'][0]
+          var tagEnd = tag['index'][1]
+
+	  // Criteria for overlap:
+	    // |----|**new**|---old--| New range within existing range
+	    // |**new**|--------old--| New range cutting the start of exisiting range
+	    // |---old-------|**new**| New range cutting the end of existing range
+	    
+          // Within
+	  if (((curStart >= tagStart) && (curEnd <= tagEnd)) || 
+		  ((curEnd > tagStart) && (curStart < tagEnd))||
+		  ((curStart < tagEnd) && (curEnd > tagStart))){
+	    console.log(tag)
+	    tags.splice(index - spliceOffset,1)
+	    spliceOffset += 1
+
+	  }
+
+    })
+  }
+
   const handleTag = color => {
+    checkTags(tags,selectionIndex)
     setTags(
       [
         ...tags,
